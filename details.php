@@ -14,6 +14,10 @@
 	// get the data for this student
 	$person = $result->fetch_assoc();
 	
+//	$sqlTime = "SELECT * FROM timestamp WHERE email = $email";
+//	$resultTime = $db->query( $sqlTime);
+/	$time = $result->fetch_assoc();
+	
 	// format the home phone
 	$phone = '(' . substr( $person[ 'phone' ], 0, 3 ) . ') ' .
 				 substr( $person[ 'phone' ], 3, 3 ) . '-' .

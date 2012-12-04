@@ -6,19 +6,32 @@
 		$db = new mysqli('localhost', 'root', 'root', 'billiards');
 
 		// create a SQL statement
-		$sql = $db->prepare( "INSERT INTO timestamp SET dateStamp = CURDATE() WHERE	email = ?");
-
+		$sql = $db->prepare(
+			"INSERT INTO timestamp ( email, dateStamp) " . "
+			 VALUES (?,?)");
 		// extract our values from $_POST
 		extract( $_POST );
 
 		// bind parameters from our form
-		$sql->bind_param( 's', $email);
+		$sql->bind_param( 'ss', $email, $dateStamp);
 
 		// execute the query
 		$sql->execute();
 
 		// redirect back to the list of students page
-		header( "Location: roster.php" );
+		header( "Location: check_in.php" );
+		
+		$success = $sql->execute();
+		
+		if ( $success ) {
+			// redirect back to the listing of restaurants
+			$message = "<h2>Thank You!!!</h2>";
+			header( 'location: check_in.php' );
+		} else {
+			// go back to the form and give an error message
+			$message = "<h2>Please Enter A Valid Email Address!</h2>";
+			header( 'location: check_in.php?message=' . urlencode( $message ) );
+		}
 	}
 ?>
 
@@ -32,8 +45,14 @@
 	<body>
 		<div id="wrapper">
 			<h2>Time Stamp</h2>
+			<?php
+	            if ( isset( $_GET[ 'message' ] ) ) {
+	                echo urldecode( $_GET[ 'message' ] );
+	            }
+	        ?>
 			<form method="post" action="<?php echo $_SERVER[ 'PHP_SELF' ]; ?>">
 				<table>
+					<input type="hidden" name="dateStamp" value= <?php echo date("m.d.y");?> />
 					<tbody>
 						<tr>
 							<th scope="row"><label for="email">Email</label></th>
@@ -47,7 +66,7 @@
 					</tbody>
 				</table>
 			</form>
-			<a class="button" href="">Go Back to Roster</a>
+			<a class="button" href="index.html">Go Back to Homepage</a>
 		</div>
 	</body>
 </html>
