@@ -1,52 +1,50 @@
 <?php
-	// connect to the DB
-	$db = new mysqli( 'localhost', 'root', 'root', 'billiards' );
-	
-	// check to see if we're coming to this page after having
-	// submitted the form
-	if ( isset( $_POST[ 'firstname' ] ) ) {
-	
-		// we have values, let's try to insert new student into the db
-		// create a SQL statement
-		$sql = $db->prepare( "UPDATE students 
-							  SET 	 firstname = ?,
-									 lastname = ?,
-									 email = ?,
-									 phone = ?,
-									 relation = ?,
-							  WHERE  pID = ?" );
-							  
-		// extract our values from $_POST
-		extract( $_POST );
+		// connect to the DB
+		$db = new mysqli( 'localhost', 'root', 'root', 'billiards' );
+
+	if ( isset( $_POST[ 'first_name' ] ) ) {
+			// we have values, let's try to insert new student into the db
+			// create a SQL statement
+			$sql = $db->prepare( "UPDATE persons 
+								  SET 	 first_name = ?,
+										 last_name = ?,
+										 email = ?,
+										 phone = ?,
+										 relation = ?
+								  WHERE  pID = ?" );
+
+			// extract our values from $_POST
+			extract( $_POST );
+
+			// get rid of non-digits in $phone
+			$phone = preg_replace( '/\D/', '', $phone );
+
+			// bind parameters from our form
+			$sql->bind_param( 'sssssi', $first_name, $last_name, $email, $phone, $relation, $pID );
+
+			// execute the query
+			$sql->execute();
+
+			// redirect back to the list of students page
+			header( "Location: roster.php" );
+		} else {
+			// get the id of the student passed in
+			$id = $_GET[ 'id' ];
 		
-		// get rid of non-digits in our home phone number
-		$phone = preg_replace( '/\D/', '', $phone );
+			// create a SQL statement
+			$sql = "SELECT * FROM persons WHERE pID = $id";
 		
-		// bind parameters from our form
-		$sql->bind_param( 'sssssssssi', $first_name, $last_name, $email, $phone, $relation, $pID );
+			// execute the query
+			$result = $db->query( $sql );
 		
-		// execute the query
-		$sql->execute();
+			// get the data for this student
+			$persons = $result->fetch_assoc();
 		
-		// redirect back to the list of students page
-		header( "Location: /340/index.php" );
-	} else {
-		// get the id of the student passed in
-		$pID = $_GET[ 'id' ];
-		
-		// create a SQL statement
-		$sql = "SELECT * FROM persons WHERE pID = $pID";
-		
-		// execute the query
-		$result = $db->query( $sql );
-		
-		// get the data for this student
-		$persons = $result->fetch_assoc();
-		
-		// format the home phone
-		$phone = '(' . substr( $persons[ 'phone' ], 0, 3 ) . ') ' .
-					 substr( $persons[ 'phone' ], 3, 3 ) . '-' .
-					 substr( $persons[ 'phone' ], 6, 4 );
+			// format the home phone
+			$phone = '(' . substr( $persons[ 'phone' ], 0, 3 ) . ') ' .
+						 substr( $persons[ 'phone' ], 3, 3 ) . '-' .
+						 substr( $persons[ 'phone' ], 6, 4 );			
+		}
 ?>
 
 <!doctype html>
@@ -58,32 +56,45 @@
 	</head>
 	<body>
 		<div id="wrapper">
-			<h1>Update a Member</h1>
-			<form method="post" action="<?php echo $_SERVER[ 'PHP_SELF' ]; ?>">
-				<input type="hidden" name="id" value="<?php echo $persons[ 'pID' ]; ?>" />
+			<h2>Update <?php echo $persons[ 'first_name' ]?> <?php echo $persons[ 'last_name' ]?></h2>
+			<form method="post" action="update.php">
+				<input type="hidden" name="pID" value="<?php echo $persons[ 'pID' ]; ?>" />
 				<table>
 					<tbody>
 						<tr>
-							<th scope="row"><label for="first_name">First Name</label></th>
-							<td><?php echo $persons[ 'first_name' ]; ?></td>
+							<th scope="row"><label for="fn">First Name</label></th>
+							<td><input type="text" name="first_name" id="fn" value="<?php echo $persons[ 'first_name' ]; ?>" /></td>
 						</tr>
 						<tr>
 							<th scope="row"><label for="last_name">Last Name</label></th>
-							<td><?php echo $persons[ 'last_name' ]; ?></td>
+							<td><input type="text" name="last_name" id="last_name" value="<?php echo $persons[ 'last_name' ]; ?>" /></td>
+						</tr>
+						<tr>
+							<th scope="row"><label for="email">Email</label></th>
+							<td><input type="text" name="email" id="email" value="<?php echo $persons[ 'email' ]; ?>" /></td>
 						</tr>
 						<tr>
 							<th scope="row"><label for="phone">Phone</label></th>
-							<td><?php echo $persons[ 'phone' ]; ?></td>
+							<td><input type="text" name="phone" id="phone" value="<?php echo $phone; ?>" /></td>
 						</tr>
 						<tr>
 							<th scope="row"><label for="relation">Relation</label></th>
-							<td><?php echo $persons[ 'relation' ]?></td>
+							<td>
+								<select name="relation" id="relation">
+									<option value="A Team"<?php echo ( 'A Team' == $persons[ 'relation' ] ) ? ' selected="selected"' : ''; ?>>A Team</option>
+									<option value="B Team"<?php echo ( 'B Team' == $persons[ 'relation' ] ) ? ' selected="selected"' : ''; ?>>B Team</option>
+									<option value="Member"<?php echo ( 'Member' == $persons[ 'relation' ] ) ? ' selected="selected"' : ''; ?>>Member</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2" style="text-align:center">
+								<input type="submit" name="submit" value="Update" />
+							</td>
 						</tr>
 					</tbody>
 				</table>
-				<p>
-					<a class="button" href='roster.php'>Back to Student Listing</a>
-				</p>
-			</div>
-		</body>
-	</html>
+			</form>
+		</div>
+	</body>
+</html>

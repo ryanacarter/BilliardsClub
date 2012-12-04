@@ -7,7 +7,7 @@
 	</head>
 	<body>
 		<div id="wrapper">
-			<h1>Billiards Club Members</h1>
+			<h2>Billiards Club Members</h2>
 			<?php
 				// create a connection to our database
 				$db = new mysqli( 'localhost', 'root', 'root', 'billiards' );
@@ -22,7 +22,7 @@
 				if ( $persons->num_rows > 0 ) {
 					// yes! it returned rows
 					// diplay the results
-					?>
+			?>
 					<table>
 						<thead>
 							<tr>

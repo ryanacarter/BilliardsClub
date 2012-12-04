@@ -11,23 +11,24 @@
 		    printf("Connect failed: %s\n", mysqli_connect_error());
 		    exit();
 		}
-
+		
 		// create a SQL statement
 		$sql = $db->prepare(
-			"INSERT INTO persons (first_name,last_name,email,phone,relation) 
+			"INSERT INTO persons (first_name, last_name, email, phone, relation) " . "
 			 VALUES (?,?,?,?,?)");
-
+		
 		// extract our values from $_POST
 		extract( $_POST );
 
 		// get rid of non-digits in our home phone number
 		$phone = preg_replace( '/\D/', '', $phone );
-
+		
 		// bind parameters from our form
 		$sql->bind_param( 'sssss', $first_name, $last_name, $email, $phone, $relation );
 
 		// execute the query
 		$sql->execute();
+
 
 		// redirect back to the list of students page
 		header( "Location: roster.php" );
@@ -42,7 +43,7 @@
 	</head>
 	<body>
 		<div id="wrapper">
-			<h1>Add Member</h1>
+			<h2>Add Member</h2>
 			<form method="post" action="<?php echo $_SERVER[ 'PHP_SELF' ]; ?>">
 				<table>
 					<tbody>
@@ -65,7 +66,7 @@
 						<tr>
 							<th scope="row"><label for="relation">Relation</label></th>
 							<td>
-								<select>
+								<select name="relation" id="relation">
 									<option value="">Select a Relation...</option>
 									<option value="A Team">A Team</option>
 									<option value="B Team">B Team</option>
@@ -75,7 +76,7 @@
 						</tr>
 						<tr>
 							<td colspan="2" style="text-align:center">
-								<input type="submit" value="Add Student" />
+								<input type="submit" value="Add member" />
 							</td>
 						</tr>
 					</tbody>
