@@ -19,12 +19,16 @@ body {
 	text-align: center;
 }
 
+#picture {
+	padding:30px;
+}
+
 table {
 	background-color: #fff;
 	border-spacing: 3px;
 	border-collapse: separate;
 	border-radius: 5px;
-	border: 1px solid #ccc;
+	border: 5px solid #000000;
 	float-right: 200px;
 }
 table thead th {
@@ -81,6 +85,8 @@ a.button {
 a.button:active {
 	background-image: -webkit-linear-gradient(top,#aaa,#F9F9F9);
 }
+
+
 
 form fieldset {
 	margin: 0 0 10px 0;
