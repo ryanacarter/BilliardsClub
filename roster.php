@@ -50,7 +50,7 @@
 								<td>' . $person[ 'relation'] . '</td>';
 								echo '<td>';
 								echo '<a href="edit.php?id=' . $person[ 'pID' ] . '">Edit</a> ';
-								echo '<a href=details.php?id=' . $person[ 'pID' ] . '">Details</a> ';
+								echo '<a href="details.php?id=' . $person[ 'pID' ] . '">Details</a> ';
 								echo '<a onclick="return confirm( \'Are you sure?\' );" href="delete.php?id=' . $person[ 'pID' ] . '">Delete</a>';
 								echo '</td>';
 								echo '</tr>';
